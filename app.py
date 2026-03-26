@@ -131,10 +131,7 @@ st.markdown(
 
 with st.sidebar:
     st.header("Setup")
-    api_key = st.text_input(
-        "Anthropic API key", type="password",
-        help="Get one free at console.anthropic.com"
-    )
+    api_key = st.secrets.get("ANTHROPIC_API_KEY", "")
     st.divider()
     st.header("Model stats")
     st.metric("Test accuracy",    "78.1%")
