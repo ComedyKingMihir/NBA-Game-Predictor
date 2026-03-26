@@ -24,22 +24,18 @@ def load_data():
     game_df['day']    = game_df['game_date'].dt.day
     game_df['year']   = game_df['game_date'].dt.year
 
-    # Player box scores — merge with game dates so date queries work
-    # Sample every 2nd row to keep memory reasonable (~400K rows → ~200K)
-    details_raw = pd.read_csv("Dataset/games_details.csv")
-    details_raw = details_raw.iloc[::2].reset_index(drop=True)
-
-    # Normalize join key
-    details_raw['GAME_ID'] = details_raw['GAME_ID'].astype(str).str.strip()
-    game_dates = game_df[['game_id', 'game_date', 'month', 'day', 'year', 'season']].copy()
-    game_dates['game_id'] = game_dates['game_id'].astype(str).str.strip()
-
-    player_df = details_raw.merge(
-        game_dates,
-        left_on='GAME_ID',
-        right_on='game_id',
-        how='left'
-    )
+    # Player box scores — graceful fallback if file unavailable
+    try:
+        details_raw = pd.read_csv("Dataset/games_details.csv")
+        details_raw = details_raw.iloc[::2].reset_index(drop=True)
+        details_raw['GAME_ID'] = details_raw['GAME_ID'].astype(str).str.strip()
+        game_dates = game_df[['game_id', 'game_date', 'month', 'day', 'year', 'season']].copy()
+        game_dates['game_id'] = game_dates['game_id'].astype(str).str.strip()
+        player_df = details_raw.merge(
+            game_dates, left_on='GAME_ID', right_on='game_id', how='left'
+        )
+    except FileNotFoundError:
+        player_df = pd.DataFrame()
 
     # Supporting tables
     players_df = pd.read_csv("Dataset/players.csv")
