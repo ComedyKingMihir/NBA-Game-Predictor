@@ -1,3 +1,4 @@
 best_rf_model.pkl
 Dataset/play_by_play.csv
 *.pkl
+.streamlit/secrets.toml
