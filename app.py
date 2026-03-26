@@ -24,7 +24,7 @@ def load_data():
     game_df['day']    = game_df['game_date'].dt.day
     game_df['year']   = game_df['game_date'].dt.year
 
-    # Player box scores — graceful fallback if file unavailable
+    # Player box scores — graceful fallback if unavailable
     try:
         details_raw = pd.read_csv("Dataset/games_details.csv")
         details_raw = details_raw.iloc[::2].reset_index(drop=True)
@@ -37,10 +37,20 @@ def load_data():
     except FileNotFoundError:
         player_df = pd.DataFrame()
 
-    # Supporting tables
-    players_df = pd.read_csv("Dataset/players.csv")
-    ranking_df = pd.read_csv("Dataset/ranking.csv")
-    teams_df   = pd.read_csv("Dataset/teams.csv")
+    try:
+        players_df = pd.read_csv("Dataset/players.csv")
+    except FileNotFoundError:
+        players_df = pd.DataFrame()
+
+    try:
+        ranking_df = pd.read_csv("Dataset/ranking.csv")
+    except FileNotFoundError:
+        ranking_df = pd.DataFrame()
+
+    try:
+        teams_df = pd.read_csv("Dataset/teams.csv")
+    except FileNotFoundError:
+        teams_df = pd.DataFrame()
 
     # Pre-computed summaries
     feature_importance = pd.read_csv("tableau_feature_importance.csv")
