@@ -24,33 +24,27 @@ def load_data():
     game_df['day']    = game_df['game_date'].dt.day
     game_df['year']   = game_df['game_date'].dt.year
 
-    # Player box scores — graceful fallback if unavailable
-    try:
-        details_raw = pd.read_csv("Dataset/games_details.csv")
-        details_raw = details_raw.iloc[::2].reset_index(drop=True)
-        details_raw['GAME_ID'] = details_raw['GAME_ID'].astype(str).str.strip()
-        game_dates = game_df[['game_id', 'game_date', 'month', 'day', 'year', 'season']].copy()
-        game_dates['game_id'] = game_dates['game_id'].astype(str).str.strip()
-        player_df = details_raw.merge(
-            game_dates, left_on='GAME_ID', right_on='game_id', how='left'
-        )
-    except FileNotFoundError:
-        player_df = pd.DataFrame()
+    # Player box scores — merge with game dates so date queries work
+    # Sample every 2nd row to keep memory reasonable (~400K rows → ~200K)
+    details_raw = pd.read_csv("Dataset/games_details.csv")
+    details_raw = details_raw.iloc[::2].reset_index(drop=True)
 
-    try:
-        players_df = pd.read_csv("Dataset/players.csv")
-    except FileNotFoundError:
-        players_df = pd.DataFrame()
+    # Normalize join key
+    details_raw['GAME_ID'] = details_raw['GAME_ID'].astype(str).str.strip()
+    game_dates = game_df[['game_id', 'game_date', 'month', 'day', 'year', 'season']].copy()
+    game_dates['game_id'] = game_dates['game_id'].astype(str).str.strip()
 
-    try:
-        ranking_df = pd.read_csv("Dataset/ranking.csv")
-    except FileNotFoundError:
-        ranking_df = pd.DataFrame()
+    player_df = details_raw.merge(
+        game_dates,
+        left_on='GAME_ID',
+        right_on='game_id',
+        how='left'
+    )
 
-    try:
-        teams_df = pd.read_csv("Dataset/teams.csv")
-    except FileNotFoundError:
-        teams_df = pd.DataFrame()
+    # Supporting tables
+    players_df = pd.read_csv("Dataset/players.csv")
+    ranking_df = pd.read_csv("Dataset/ranking.csv")
+    teams_df   = pd.read_csv("Dataset/teams.csv")
 
     # Pre-computed summaries
     feature_importance = pd.read_csv("tableau_feature_importance.csv")
@@ -83,18 +77,18 @@ You have access to the following pandas DataFrames:
    Sample: {game_df.head(2).to_string(index=False)}
 
 2. `player_df` — {len(player_df):,} rows of individual player box scores merged with game dates
-   Columns: {player_df.columns.tolist()}
+   Columns: {player_df.columns.tolist() if not player_df.empty else "Not available"}
    Key columns: PLAYER_NAME, PTS, REB, AST, STL, BLK, FGM, FGA, FG_PCT, MIN, game_date, month, day, year, season
-   Sample: {player_df[['PLAYER_NAME','PTS','REB','AST','game_date','month','day','year']].head(2).to_string(index=False)}
+   Sample: {player_df[["PLAYER_NAME","PTS","REB","AST","game_date","month","day","year"]].head(2).to_string(index=False) if not player_df.empty else "No data available"}
 
 3. `players_df` — {len(players_df):,} rows of player biographical info
-   Columns: {players_df.columns.tolist()}
+   Columns: {players_df.columns.tolist() if not players_df.empty else "Not available"}
 
 4. `ranking_df` — {len(ranking_df):,} rows of team standings over time
-   Columns: {ranking_df.columns.tolist()}
+   Columns: {ranking_df.columns.tolist() if not ranking_df.empty else "Not available"}
 
 5. `teams_df` — {len(teams_df):,} rows of team info
-   Columns: {teams_df.columns.tolist()}
+   Columns: {teams_df.columns.tolist() if not teams_df.empty else "Not available"}
 
 PRE-COMPUTED SUMMARIES:
 Feature importances: {fi}
