@@ -1,0 +1,8 @@
+anthropic==0.86.0
+joblib @ file:///C:/miniconda3/conda-bld/joblib_1757926362684/work
+numpy @ file:///C:/miniconda3/conda-bld/numpy_and_numpy_base_1757670256083/work/dist/numpy-2.3.3-cp313-cp313-win_amd64.whl#sha256=d9474e66189cba52ea8e11316ddea0a38ae7f8fc06e3ef798d9bbfddc6ba51a5
+pandas==2.3.3
+scikit-learn @ file:///C:/b/abs_0dwalqot3o/croot/scikit-learn_1737988780693/work/dist/scikit_learn-1.6.1-cp313-cp313-win_amd64.whl#sha256=3e52b503bae0e72bc233231ad5d730537e192e1214e0ac766be348eb9dfb7cfd
+scipy @ file:///C:/miniconda3/conda-bld/scipy_1759489068917/work/dist/scipy-1.16.2-cp313-cp313-win_amd64.whl#sha256=eb400e6df73e5b174b3f26cd8154adb3247e9d8c205b773b3080a2f9379b9899
+statsmodels==0.14.6
+streamlit==1.55.0
