@@ -237,7 +237,7 @@ if prompt:
                 client = anthropic.Anthropic(api_key=api_key)
 
                 response = client.messages.create(
-                    model="claude-sonnet-4-20250514",
+                    model="claude-sonnet-4-6",
                     max_tokens=1024,
                     system=build_schema_context(),
                     messages=st.session_state.raw_history
@@ -259,7 +259,7 @@ if prompt:
                         {"role": "user",      "content": followup_prompt}
                     ]
                     final_response = client.messages.create(
-                        model="claude-sonnet-4-20250514",
+                        model="claude-sonnet-4-6",
                         max_tokens=512,
                         system=build_schema_context(),
                         messages=followup_history
